@@ -23,6 +23,10 @@ resource "aws_vpc" "toba_vpc" {
         Name = "toba_vpc-${random_integer.random.id}"
     }
 
+    lifecycle {
+        create_before_destroy = true
+    }
+
 }
 
 resource "aws_subnet" "toba_public_subnet" {
