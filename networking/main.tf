@@ -28,7 +28,6 @@ resource "aws_vpc" "toba_vpc" {
   lifecycle {
     create_before_destroy = true
   }
-
 }
 
 resource "aws_subnet" "toba_public_subnet" {
@@ -116,5 +115,13 @@ resource "aws_security_group" "toba_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
 
+  }
+}
+resource "aws_db_subnet_group" "toba_rds_subnetgroup" {
+  count      = var.db_subnet_group == true ? 1 : 0
+  name       = "toba_rds_subnetgroup"
+  subnet_ids = aws_subnet.toba_private_subnet.*.id
+  tags = {
+    Name = "toba_rds_sng"
   }
 }
