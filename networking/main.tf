@@ -28,7 +28,6 @@ resource "aws_vpc" "toba_vpc" {
   lifecycle {
     create_before_destroy = true
   }
-
 }
 
 resource "aws_subnet" "toba_public_subnet" {
@@ -95,16 +94,19 @@ resource "aws_default_route_table" "toba_private_rt" {
 #-- security_group---
 
 resource "aws_security_group" "toba_sg" {
-  name        = "public_sg"
-  description = "security Group[ for Public Access"
+  for_each    = var.security_groups
+  name        = each.value.name
+  description = each.value.description
   vpc_id      = aws_vpc.toba_vpc.id
 
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.access_ip]
+  dynamic "ingress" {
+    for_each = each.value.ingress
+    content {
+      from_port   = ingress.value.from
+      to_port     = ingress.value.to
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
   }
 
   egress {
@@ -113,5 +115,13 @@ resource "aws_security_group" "toba_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
 
+  }
+}
+resource "aws_db_subnet_group" "toba_rds_subnetgroup" {
+  count      = var.db_subnet_group == true ? 1 : 0
+  name       = "toba_rds_subnetgroup"
+  subnet_ids = aws_subnet.toba_private_subnet.*.id
+  tags = {
+    Name = "toba_rds_sng"
   }
 }
