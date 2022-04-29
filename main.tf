@@ -21,9 +21,9 @@ module "database" {
   db_storage             = 10
   db_engine_version      = "5.7.22"
   db_instance_class      = "db.t2.micro"
-  db_name                = "rancher"
-  db_user                = "bobby"
-  dbpassword             = "t4b!3s2021"
+  db_name                = var.db_name
+  db_user                = var.db_user
+  db_password             = var.db_password
   db_identifier          = "toba-db"
   skip_db_snapshot       = true
   db_subnet_group_name   = module.networking.db_subnet_group_name[0]
