@@ -15,7 +15,7 @@ module "networking" {
   db_subnet_group  = true
 }
 
-# ---module databse---
+# # ---module databse---
 module "database" {
   source                 = "./database"
   db_storage             = 10
@@ -28,4 +28,13 @@ module "database" {
   skip_db_snapshot       = true
   db_subnet_group_name   = module.networking.db_subnet_group_name[0]
   vpc_security_group_ids = module.networking.db_security_group
+}
+
+
+# --- loadbalancermodule --
+
+module "loadbalancing" {
+  source = "./Loadbalancing"
+  public_sg = module.networking.public_sg
+  public_subnets = module.networking.public_subnets
 }
