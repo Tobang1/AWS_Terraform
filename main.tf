@@ -15,26 +15,33 @@ module "networking" {
   db_subnet_group  = true
 }
 
-# # ---module databse---
-module "database" {
-  source                 = "./database"
-  db_storage             = 10
-  db_engine_version      = "5.7.22"
-  db_instance_class      = "db.t2.micro"
-  db_name                = var.db_name
-  db_user                = var.db_user
-  db_password             = var.db_password
-  db_identifier          = "toba-db"
-  skip_db_snapshot       = true
-  db_subnet_group_name   = module.networking.db_subnet_group_name[0]
-  vpc_security_group_ids = module.networking.db_security_group
-}
+# # # ---module databse---
+# module "database" {
+#   source                 = "./database"
+#   db_storage             = 10
+#   db_engine_version      = "5.7.22"
+#   db_instance_class      = "db.t2.micro"
+#   db_name                = var.db_name
+#   db_user                = var.db_user
+#   db_password            = var.db_password
+#   db_identifier          = "toba-db"
+#   skip_db_snapshot       = true
+#   db_subnet_group_name   = module.networking.db_subnet_group_name[0]
+#   vpc_security_group_ids = module.networking.db_security_group
+# }
 
 
 # --- loadbalancermodule --
 
 module "loadbalancing" {
-  source = "./Loadbalancing"
-  public_sg = module.networking.public_sg
-  public_subnets = module.networking.public_subnets
+  source                 = "./Loadbalancing"
+  public_sg              = module.networking.public_sg
+  public_subnets         = module.networking.public_subnets
+  tg_port                = 80
+  tg_protocol            = "HTTP"
+  vpc_id                 = module.networking.vpc_id
+  lb_healthy_threshold   = 2
+  lb_unhealthy_threshold = 2
+  lb_timeout             = 3
+  lb_interval            = 30
 }
