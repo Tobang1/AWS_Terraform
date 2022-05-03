@@ -10,7 +10,7 @@ resource "aws_lb" "toba_lb" {
 
 #--- target group to get randoom uuid ---
 resource "aws_lb_target_group" "toba_tg" {
-  name     = "toba-tg"       #"toba-lb-tg-${substr(uuid(), 0, 3)}"
+  name     = "toba-lb-tg-${substr(uuid(), 0, 3)}"
   port     = var.tg_port     #80 
   protocol = var.tg_protocol #"HTTP"
   vpc_id   = var.vpc_id
@@ -22,3 +22,4 @@ resource "aws_lb_target_group" "toba_tg" {
   }
 
 }
+
